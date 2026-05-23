@@ -60,6 +60,12 @@ def handle_deprecated_rsl_rl_cfg(agent_cfg: RslRlBaseRunnerCfg, installed_versio
                 )
             del agent_cfg.algorithm.optimizer
 
+        # remove fields only available in rsl-rl >= 4.0.0
+        if isinstance(agent_cfg.algorithm, RslRlPpoAlgorithmCfg):
+            for _field in ("share_cnn_encoders", "rnd_cfg", "symmetry_cfg", "normalize_advantage_per_mini_batch"):
+                if hasattr(agent_cfg.algorithm, _field):
+                    delattr(agent_cfg.algorithm, _field)
+
         # warn about model configurations only used in rsl-rl >= 4.0.0
         for model_name in _MODEL_CFG_NAMES:
             if _has_non_missing_attr(agent_cfg, model_name):
